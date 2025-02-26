@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="theme-switcher">
+        <button class="theme-btn" data-theme="light">☀️</button>
+        <button class="theme-btn" data-theme="dark">🌙</button>
+        <button class="theme-btn" data-theme="purple">💜</button>
+    </div>
+    
+    <div class="container">
+        <div class="main-content">
+            <h1>Password Strength Checker</h1>
+            
+            <div class="input-group">
+                <div class="password-input-wrapper">
+                    <input type="password" id="passwordInput" placeholder="Type your password">
+                    <button id="togglePassword">👁️</button>
+                </div>
+                <button id="generatePassword" class="btn">Generate Strong Password</button>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            
+            <div class="criteria-list">
+                <p id="length">At least 8 characters</p>
+                <p id="uppercase">Contains uppercase letter</p>
+                <p id="lowercase">Contains lowercase letter</p>
+                <p id="number">Contains number</p>
+                <p id="special">Contains special character</p>
+            </div>
+            
+            <div class="strength-emoji" id="strengthEmoji"></div>
+            
+            <div class="strength-text" id="strengthText">
+                Password Strength: <span>Start typing...</span>
+            </div>
+        </div>
+
+        <div class="additional-features">
+            <div class="entropy-score">
+                <h3>Password Analysis</h3>
+                <p>Entropy: <span id="entropyScore">0 bits</span></p>
+                <p>Time to Crack: <span id="crackTime">-</span></p>
+            </div>
+
+            <div class="button-group">
+                <button id="copyPassword" class="btn">Copy Password</button>
+            </div>
+
+            <div class="password-suggestions">
+                <h3>Suggested Improvements</h3>
+                <div id="suggestions"></div>
+            </div>
+
+            <div class="expiration-tracker">
+                <h3>Password Expiration</h3>
+                <p id="expirationStatus"></p>
+                <button id="renewPassword" class="btn">Renew Password</button>
+            </div>
+
+            <div class="password-history">
+                <h3>Recent Passwords</h3>
+                <ul id="passwordHistory"></ul>
+            </div>
+
+            <div class="complexity-breakdown">
+                <h3>Complexity Analysis</h3>
+                <div class="complexity-chart">
+                    <canvas id="complexityChart"></canvas>
+                </div>
+                <div id="complexityDetails"></div>
+            </div>
+
+            <div class="password-generator-options">
+                <h3>Password Generator Options</h3>
+                <div class="generator-controls">
+                    <label>
+                        Length: <input type="range" id="passwordLength" min="8" max="64" value="16">
+                        <span id="lengthValue">16</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="includeUppercase" checked> Uppercase</label>
+                        <label><input type="checkbox" id="includeLowercase" checked> Lowercase</label>
+                        <label><input type="checkbox" id="includeNumbers" checked> Numbers</label>
+                        <label><input type="checkbox" id="includeSymbols" checked> Symbols</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-management">
+                <h3>Password Data</h3>
+                <div class="button-group">
+                    <button id="exportData" class="btn">Export Data</button>
+                    <button id="importData" class="btn">Import Data</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+
+            <div class="strength-history">
+                <h3>Strength History</h3>
+                <div class="strength-history-wrapper">
+                    <canvas id="strengthHistoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

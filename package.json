@@ -1,0 +1,23 @@
+{
+  "name": "password-strength-meter",
+  "version": "1.0.0",
+  "description": "A simple password strength meter that evaluates the strength of passwords based on various criteria.",
+  "main": "src/js/app.js",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build step not defined'",
+    "test": "echo 'No tests defined'"
+  },
+  "keywords": [
+    "password",
+    "strength",
+    "meter",
+    "security"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}
