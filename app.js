@@ -17,13 +17,13 @@ const criteria = {
     special: document.getElementById('special')
 };
 
-// Common password patterns
+
 const commonPatterns = [
     /^123\d*$/,
     /^password\d*$/i,
     /^qwerty\d*$/i,
     /^admin\d*$/i,
-    /(\w)\1{2,}/  // Repeated characters
+    /(\w)\1{2,}/  
 ];
 
 const strengthEmojis = {
@@ -44,7 +44,7 @@ const passwordSuggestions = {
     patterns: 'Avoid common patterns and sequences'
 };
 
-// Theme switching
+
 document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.documentElement.setAttribute('data-theme', btn.dataset.theme);
@@ -52,11 +52,11 @@ document.querySelectorAll('.theme-btn').forEach(btn => {
     });
 });
 
-// Load saved theme
+
 const savedTheme = localStorage.getItem('preferred-theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
 
-// Calculate password entropy
+
 const calculateEntropy = (password) => {
     let charset = 0;
     charset += /[a-z]/.test(password) ? 26 : 0;
@@ -68,9 +68,9 @@ const calculateEntropy = (password) => {
     return Math.round(entropy);
 };
 
-// Estimate crack time
+
 const estimateCrackTime = (entropy) => {
-    const guessesPerSecond = 1000000000; // Assume 1 billion guesses per second
+    const guessesPerSecond = 1000000000; 
     const seconds = Math.pow(2, entropy) / guessesPerSecond;
     
     if (seconds < 60) return 'Instant';
@@ -80,7 +80,7 @@ const estimateCrackTime = (entropy) => {
     return `${Math.round(seconds / 31536000)} years`;
 };
 
-// Generate strong password
+
 const generateStrongPassword = () => {
     const length = parseInt(document.getElementById('passwordLength').value);
     const uppercase = document.getElementById('includeUppercase').checked;
@@ -108,7 +108,7 @@ const generateStrongPassword = () => {
     checkPassword(password);
 };
 
-// Add missing strength level function
+
 const getStrengthLevel = (validCriteria) => {
     if (validCriteria <= 1) return 'Very Weak';
     if (validCriteria === 2) return 'Weak';
@@ -117,15 +117,15 @@ const getStrengthLevel = (validCriteria) => {
     return 'Very Strong';
 };
 
-// Fix password check function
+
 const checkPassword = (password) => {
-    // Reset criteria
+    
     Object.keys(criteria).forEach(key => {
         criteria[key].classList.remove('valid');
     });
 
     if (!password) {
-        // Reset all indicators if password is empty
+        
         progressBar.className = 'progress';
         strengthText.querySelector('span').textContent = 'Start typing...';
         document.getElementById('strengthEmoji').textContent = '';
@@ -135,28 +135,28 @@ const checkPassword = (password) => {
         return;
     }
 
-    // Check each criterion
+   
     if (password.length >= 8) criteria.length.classList.add('valid');
     if (/[A-Z]/.test(password)) criteria.uppercase.classList.add('valid');
     if (/[a-z]/.test(password)) criteria.lowercase.classList.add('valid');
     if (/[0-9]/.test(password)) criteria.number.classList.add('valid');
     if (/[^A-Za-z0-9]/.test(password)) criteria.special.classList.add('valid');
 
-    // Calculate strength
+   
     const validCriteria = Object.keys(criteria)
         .filter(key => criteria[key].classList.contains('valid')).length;
 
-    // Update UI
+    
     const strengthLevel = getStrengthLevel(validCriteria);
     updateStrength(validCriteria, password.length);
     document.getElementById('strengthEmoji').textContent = strengthEmojis[strengthLevel];
 
-    // Update analysis
+  
     const entropy = calculateEntropy(password);
     entropyScore.textContent = `${entropy} bits`;
     crackTime.textContent = estimateCrackTime(entropy);
 
-    // Update suggestions and expiration
+   
     updateSuggestions(password);
     trackPasswordExpiration(password);
 
@@ -198,7 +198,6 @@ const updateStrength = (validCriteria, length) => {
     strengthText.querySelector('span').textContent = strength;
 };
 
-// Password history management
 const savePasswordToHistory = (password) => {
     const passwords = JSON.parse(localStorage.getItem('passwordHistory') || '[]');
     passwords.unshift({ 
@@ -219,7 +218,6 @@ const updatePasswordHistory = () => {
         .join('');
 };
 
-// Enhanced updateSuggestions function
 const updateSuggestions = (password) => {
     const suggestions = [];
     const add = (condition, message) => condition && suggestions.push(message);
@@ -241,7 +239,7 @@ const updateSuggestions = (password) => {
     document.getElementById('suggestions').innerHTML = suggestionsHtml;
 };
 
-// Enhanced password expiration handling
+
 const trackPasswordExpiration = (password) => {
     if (password && password.length >= 8) {
         const currentDate = new Date();
@@ -291,10 +289,10 @@ const updateExpirationStatus = () => {
     statusElement.innerHTML = statusHtml;
 };
 
-// Dictionary attack check
+
 const commonPasswords = [
     'password', '123456', 'qwerty', 'admin', 'welcome',
-    // Add more common passwords...
+    
 ];
 
 const checkDictionary = (password) => {
@@ -305,7 +303,7 @@ const checkDictionary = (password) => {
     );
 };
 
-// Enhanced password generation with options
+
 const generatePassword = () => {
     const length = parseInt(document.getElementById('passwordLength').value);
     const uppercase = document.getElementById('includeUppercase').checked;
@@ -319,7 +317,7 @@ const generatePassword = () => {
     if (numbers) chars += '0123456789';
     if (symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-    if (!chars) return ''; // No character set selected
+    if (!chars) return ''; 
 
     let password = '';
     for (let i = 0; i < length; i++) {
@@ -328,11 +326,11 @@ const generatePassword = () => {
     return password;
 };
 
-// Complexity chart
+
 let complexityChart = null;
 let strengthHistoryChart = null;
 
-// Add strength history tracking
+
 const updateStrengthHistory = (password) => {
     const history = JSON.parse(localStorage.getItem('strengthHistory') || '[]');
     const strength = {
@@ -342,7 +340,7 @@ const updateStrengthHistory = (password) => {
     };
     
     history.push(strength);
-    if (history.length > 10) history.shift(); // Keep last 10 entries
+    if (history.length > 10) history.shift(); 
     localStorage.setItem('strengthHistory', JSON.stringify(history));
     
     updateStrengthHistoryChart(history);
@@ -431,7 +429,7 @@ const updateStrengthHistoryChart = (history) => {
     });
 };
 
-// Update the complexity chart with better visualization
+
 const updateComplexityChart = (password) => {
     const ctx = document.getElementById('complexityChart').getContext('2d');
     const scores = {
