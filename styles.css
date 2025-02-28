@@ -6,6 +6,7 @@
     --accent-color: #2ecc71;
     --border-color: #dddddd;
     --shadow-color: rgba(0, 0, 0, 0.1);
+    --animation-duration: 0.2s; /* Reduced animation duration */
 }
 
 [data-theme="dark"] {
@@ -45,6 +46,7 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 2rem;
+    transition: background-color var(--animation-duration) ease;
 }
 
 .container {
@@ -60,6 +62,9 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
+    animation: scaleIn 0.5s ease;
+    transition: box-shadow var(--animation-duration) ease, 
+                background-color var(--animation-duration) ease;
 }
 
 @media (min-width: 1200px) {
@@ -131,7 +136,7 @@ input {
     box-sizing: border-box;
     background: var(--input-bg, var(--bg-secondary));
     color: var(--text-primary);
-    transition: all 0.2s ease;
+    transition: all 0.2s ease; /* Faster transition */
 }
 
 input:focus {
@@ -165,22 +170,25 @@ input:focus {
     background: #eee;
     border-radius: 4px;
     margin: 1rem 0;
+    overflow: hidden;
 }
 
 .progress {
     height: 100%;
     width: 0;
     border-radius: 4px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
 .criteria-list p {
     margin: 0.5rem 0;
     color: var(--text-secondary);
+    transition: color 0.2s ease; /* Only transition color, not transform */
 }
 
 .criteria-list p.valid {
     color: var(--accent-color);
+    transform: translateX(5px);
 }
 
 .criteria-list p.valid::before {
@@ -192,10 +200,12 @@ input:focus {
     text-align: center;
     font-weight: bold;
     margin-top: 1rem;
+    transition: all 0.2s ease;
 }
 
 .strength-text span {
     color: var(--accent-color);
+    transition: color 0.3s ease;
 }
 
 .weak { background: #ff4757; width: 20%; }
@@ -217,17 +227,23 @@ input:focus {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: opacity 0.3s;
     font-weight: 500;
     letter-spacing: 0.01em;
     text-transform: capitalize;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease; /* Faster transition */
+    position: relative;
+    overflow: hidden;
 }
 
 .btn:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px); /* Reduced movement */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Lighter shadow */
+}
+
+/* Remove the sheen effect which can cause lag */
+.btn::after {
+    display: none;
 }
 
 .button-group {
@@ -292,11 +308,11 @@ input:focus {
     cursor: pointer;
     width: 40px;
     height: 40px;
-    transition: transform 0.3s;
+    transition: transform 0.2s;
 }
 
 .theme-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.05); /* Reduced scaling */
 }
 
 .password-suggestions {
@@ -310,16 +326,17 @@ input:focus {
 
 .suggestion-item {
     padding: 1rem;
-    margin: 0.25rem 0;
+    margin: 0.5rem 0;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease; /* Only transition background */
     border-radius: 4px;
     background: var(--suggestion-bg);
-    margin: 0.5rem 0;
+    transform-origin: left center;
 }
 
 .suggestion-item:hover {
     background: var(--suggestion-hover, var(--border-color));
+    transform: translateX(5px);
 }
 
 .strength-emoji {
@@ -327,6 +344,7 @@ input:focus {
     text-align: center;
     margin: 1rem 0;
     animation: bounce 0.5s;
+    transition: all 0.3s ease;
 }
 
 .expiration-warning {
@@ -481,4 +499,57 @@ input[type="range"] {
 h1, h2, h3 {
     font-weight: 600;
     letter-spacing: -0.02em;
+}
+
+/* Animated hint element */
+.password-hint {
+    position: absolute;
+    background: var(--accent-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    transform-origin: top center;
+    animation: slideInUp 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.password-hint::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid var(--accent-color);
+}
+
+/* Simplify copy feedback for better performance */
+.copy-feedback {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+/* Remove the complex card flip animations */
+.card-flip,
+.card-flip-inner,
+.card-front,
+.card-back {
+    perspective: none;
+    transform-style: flat;
+    backface-visibility: visible;
+    transform: none;
+    transition: none;
 }

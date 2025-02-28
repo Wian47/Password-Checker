@@ -1,0 +1,63 @@
+/* Reduced and optimized animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Simplified feedback animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* Progress bar animation */
+@keyframes fillUp {
+    from { width: 0; }
+}
+
+/* Simple spinner animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Apply animations to elements (reduced) */
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.slide-up {
+    animation: slideInUp 0.3s ease forwards;
+}
+
+.pulse {
+    animation: pulse 0.3s ease-in-out;
+}
+
+.bounce {
+    animation: bounce 0.5s ease;
+}
+
+.spin {
+    animation: spin 0.8s linear infinite;
+}
+
+/* Remove staggered animations for better performance */

@@ -49,6 +49,11 @@ document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.documentElement.setAttribute('data-theme', btn.dataset.theme);
         localStorage.setItem('preferred-theme', btn.dataset.theme);
+        
+        // Animate the container
+        const container = document.querySelector('.container');
+        container.classList.add('pulse');
+        setTimeout(() => container.classList.remove('pulse'), 500);
     });
 });
 
@@ -82,30 +87,40 @@ const estimateCrackTime = (entropy) => {
 
 // Generate strong password
 const generateStrongPassword = () => {
-    const length = parseInt(document.getElementById('passwordLength').value);
-    const uppercase = document.getElementById('includeUppercase').checked;
-    const lowercase = document.getElementById('includeLowercase').checked;
-    const numbers = document.getElementById('includeNumbers').checked;
-    const symbols = document.getElementById('includeSymbols').checked;
-
-    let chars = '';
-    if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    if (lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
-    if (numbers) chars += '0123456789';
-    if (symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-
-    if (!chars) {
-        alert('Please select at least one character type');
-        return;
-    }
-
-    let password = '';
-    for (let i = 0; i < length; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    // Simplified button state
+    generateBtn.textContent = 'Generating...';
+    generateBtn.disabled = true;
     
-    passwordInput.value = password;
-    checkPassword(password);
+    setTimeout(() => {
+        const length = parseInt(document.getElementById('passwordLength').value);
+        const uppercase = document.getElementById('includeUppercase').checked;
+        const lowercase = document.getElementById('includeLowercase').checked;
+        const numbers = document.getElementById('includeNumbers').checked;
+        const symbols = document.getElementById('includeSymbols').checked;
+
+        let chars = '';
+        if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        if (lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+        if (numbers) chars += '0123456789';
+        if (symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+        if (!chars) {
+            alert('Please select at least one character type');
+            return;
+        }
+
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        
+        passwordInput.value = password;
+        checkPassword(password);
+        
+        // Restore button
+        generateBtn.textContent = 'Generate Strong Password';
+        generateBtn.disabled = false;
+    }, 200); // Reduced timeout for faster response
 };
 
 // Add missing strength level function
@@ -117,7 +132,7 @@ const getStrengthLevel = (validCriteria) => {
     return 'Very Strong';
 };
 
-// Fix password check function
+// Enhanced password check function
 const checkPassword = (password) => {
     // Reset criteria
     Object.keys(criteria).forEach(key => {
@@ -135,23 +150,31 @@ const checkPassword = (password) => {
         return;
     }
 
-    // Check each criterion
-    if (password.length >= 8) criteria.length.classList.add('valid');
-    if (/[A-Z]/.test(password)) criteria.uppercase.classList.add('valid');
-    if (/[a-z]/.test(password)) criteria.lowercase.classList.add('valid');
-    if (/[0-9]/.test(password)) criteria.number.classList.add('valid');
-    if (/[^A-Za-z0-9]/.test(password)) criteria.special.classList.add('valid');
+    // Check each criterion with minimal animation
+    Object.keys(criteria).forEach(key => {
+        let isValid = false;
+        if (key === 'length') isValid = password.length >= 8;
+        else if (key === 'uppercase') isValid = /[A-Z]/.test(password);
+        else if (key === 'lowercase') isValid = /[a-z]/.test(password);
+        else if (key === 'number') isValid = /[0-9]/.test(password);
+        else if (key === 'special') isValid = /[^A-Za-z0-9]/.test(password);
+        
+        if (isValid) {
+            criteria[key].classList.add('valid');
+        }
+    });
 
     // Calculate strength
     const validCriteria = Object.keys(criteria)
         .filter(key => criteria[key].classList.contains('valid')).length;
 
-    // Update UI
+    // Update UI with minimal animations
     const strengthLevel = getStrengthLevel(validCriteria);
     updateStrength(validCriteria, password.length);
+    
     document.getElementById('strengthEmoji').textContent = strengthEmojis[strengthLevel];
 
-    // Update analysis
+    // Update analysis with minimal animations
     const entropy = calculateEntropy(password);
     entropyScore.textContent = `${entropy} bits`;
     crackTime.textContent = estimateCrackTime(entropy);
@@ -168,8 +191,13 @@ const checkPassword = (password) => {
         `;
     }
     
-    updateComplexityChart(password);
-    updateStrengthHistory(password);
+    // Only update charts occasionally to improve performance
+    // Use a debounce technique to prevent excessive chart updates
+    clearTimeout(window.chartUpdateTimeout);
+    window.chartUpdateTimeout = setTimeout(() => {
+        updateComplexityChart(password);
+        updateStrengthHistory(password);
+    }, 500);
 };
 
 const updateStrength = (validCriteria, length) => {
@@ -219,7 +247,7 @@ const updatePasswordHistory = () => {
         .join('');
 };
 
-// Enhanced updateSuggestions function
+// Enhanced updateSuggestions function with animations
 const updateSuggestions = (password) => {
     const suggestions = [];
     const add = (condition, message) => condition && suggestions.push(message);
@@ -232,7 +260,7 @@ const updateSuggestions = (password) => {
     add(/(\w)\1{2,}/.test(password), 'Avoid repeating characters');
     
     const suggestionsHtml = suggestions.length ? suggestions
-        .map(suggestion => `
+        .map((suggestion) => `
             <div class="suggestion-item" role="button" tabindex="0">
                 <span>💡</span> ${suggestion}
             </div>
@@ -358,12 +386,17 @@ const calculateStrengthScore = (password) => {
     return Math.min(100, (entropy/50 + variety*25 + uniqueness*25));
 };
 
+// Enhance strength history chart with animations
 const updateStrengthHistoryChart = (history) => {
     const ctx = document.getElementById('strengthHistoryChart').getContext('2d');
     
     if (strengthHistoryChart) {
         strengthHistoryChart.destroy();
     }
+
+    // Simplified animation wrapper
+    const wrapper = document.querySelector('.strength-history-wrapper');
+    wrapper.classList.add('fade-in');
 
     strengthHistoryChart = new Chart(ctx, {
         type: 'line',
@@ -381,6 +414,10 @@ const updateStrengthHistoryChart = (history) => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            // Reduce animation duration for better performance
+            animation: {
+                duration: 500
+            },
             scales: {
                 y: {
                     beginAtZero: true,
@@ -442,6 +479,7 @@ const updateComplexityChart = (password) => {
         uniqueness: (new Set(password).size / password.length) * 100 || 0
     };
 
+    // Remove fade-in animation
     if (complexityChart) {
         complexityChart.destroy();
     }
@@ -464,6 +502,10 @@ const updateComplexityChart = (password) => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            // Reduce animation duration for better performance
+            animation: {
+                duration: 300
+            },
             scales: {
                 r: {
                     beginAtZero: true,
@@ -490,7 +532,7 @@ const updateComplexityChart = (password) => {
         }
     });
 
-
+    // Simplify the details section animation
     const details = document.getElementById('complexityDetails');
     details.innerHTML = `
         <div class="complexity-scores">
@@ -557,7 +599,10 @@ document.getElementById('passwordLength').addEventListener('input', (e) => {
 });
 
 
-passwordInput.addEventListener('input', (e) => checkPassword(e.target.value));
+passwordInput.addEventListener('input', (e) => {
+    // Remove the floating letter effect completely
+    checkPassword(e.target.value);
+});
 
 togglePassword.addEventListener('click', () => {
     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -567,9 +612,17 @@ togglePassword.addEventListener('click', () => {
 
 generateBtn.addEventListener('click', generateStrongPassword);
 
+// Enhance copy button with animation
 copyBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(passwordInput.value)
-        .then(() => alert('Password copied to clipboard!'));
+        .then(() => {
+            copyBtn.textContent = '✓ Copied!';
+            showFeedback('Password copied to clipboard!');
+            
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy Password';
+            }, 1500);
+        });
 });
 
 const saveBtn = document.createElement('button');
@@ -578,11 +631,18 @@ saveBtn.className = 'btn';
 saveBtn.textContent = 'Save Password';
 document.querySelector('.button-group').appendChild(saveBtn);
 
+// Enhanced save button with animation
 saveBtn.addEventListener('click', () => {
     const password = passwordInput.value;
     if (password) {
+        saveBtn.textContent = '✓ Saved!';
+        
         savePasswordToHistory(password);
-        alert('Password saved to history!');
+        showFeedback('Password saved to history!');
+        
+        setTimeout(() => {
+            saveBtn.textContent = 'Save Password';
+        }, 1500);
     }
 });
 
@@ -638,8 +698,29 @@ document.getElementById('renewPassword').addEventListener('click', () => {
     }
 });
 
+// Enhanced UI Feedback Function
+const showFeedback = (message, type = 'success') => {
+    // Remove any existing feedback
+    const existingFeedback = document.querySelector('.copy-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+    
+    // Create and show new feedback
+    const feedback = document.createElement('div');
+    feedback.className = `copy-feedback ${type}`;
+    feedback.textContent = message;
+    document.body.appendChild(feedback);
+    
+    // Remove after shorter time
+    setTimeout(() => {
+        feedback.remove();
+    }, 2000);
+};
 
+// Optimize DOMContentLoaded event by removing most animations
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with minimal animations
     updatePasswordHistory();
     updateExpirationStatus();
     
@@ -649,6 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkPassword(lastPassword);
     }
 
+    // Initialize charts just once at load time
     updateComplexityChart('');
     updateStrengthHistoryChart(JSON.parse(localStorage.getItem('strengthHistory') || '[]'));
 });
