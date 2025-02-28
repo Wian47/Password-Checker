@@ -132,7 +132,6 @@ const getStrengthLevel = (validCriteria) => {
     return 'Very Strong';
 };
 
-// Fix password check function
 const checkPassword = (password) => {
     
     Object.keys(criteria).forEach(key => {
@@ -150,29 +149,34 @@ const checkPassword = (password) => {
         return;
     }
 
-    // Check each criterion
-    if (password.length >= 8) criteria.length.classList.add('valid');
-    if (/[A-Z]/.test(password)) criteria.uppercase.classList.add('valid');
-    if (/[a-z]/.test(password)) criteria.lowercase.classList.add('valid');
-    if (/[0-9]/.test(password)) criteria.number.classList.add('valid');
-    if (/[^A-Za-z0-9]/.test(password)) criteria.special.classList.add('valid');
+    // Check each criterion with minimal animation
+    Object.keys(criteria).forEach(key => {
+        let isValid = false;
+        if (key === 'length') isValid = password.length >= 8;
+        else if (key === 'uppercase') isValid = /[A-Z]/.test(password);
+        else if (key === 'lowercase') isValid = /[a-z]/.test(password);
+        else if (key === 'number') isValid = /[0-9]/.test(password);
+        else if (key === 'special') isValid = /[^A-Za-z0-9]/.test(password);
+        
+        if (isValid) {
+            criteria[key].classList.add('valid');
+        }
+    });
 
-   
     const validCriteria = Object.keys(criteria)
         .filter(key => criteria[key].classList.contains('valid')).length;
 
-    // Update UI
+    // Update UI with minimal animations
     const strengthLevel = getStrengthLevel(validCriteria);
     updateStrength(validCriteria, password.length);
     
     document.getElementById('strengthEmoji').textContent = strengthEmojis[strengthLevel];
 
-    // Update analysis
+    // Update analysis with minimal animations
     const entropy = calculateEntropy(password);
     entropyScore.textContent = `${entropy} bits`;
     crackTime.textContent = estimateCrackTime(entropy);
 
-   
     updateSuggestions(password);
     trackPasswordExpiration(password);
 
@@ -239,7 +243,10 @@ const updatePasswordHistory = () => {
         .join('');
 };
 
-
+<<<<<<< HEAD
+// Enhanced updateSuggestions function with animations
+=======
+>>>>>>> 1a57dabc7b7baa9a1eec6c640045735433ea5574
 const updateSuggestions = (password) => {
     const suggestions = [];
     const add = (condition, message) => condition && suggestions.push(message);
