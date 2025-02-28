@@ -239,7 +239,7 @@ const updatePasswordHistory = () => {
         .join('');
 };
 
-// Enhanced updateSuggestions function
+
 const updateSuggestions = (password) => {
     const suggestions = [];
     const add = (condition, message) => condition && suggestions.push(message);
